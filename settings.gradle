@@ -1,2 +1,3 @@
 rootProject.name='StudyOpenCV'
 include ':app', ':OpenCV410'
+include ':FaceVerification'
