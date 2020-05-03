@@ -3,6 +3,14 @@
     <JetCodeStyleSettings>
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
+    <codeStyleSettings language="JAVA">
+      <option name="ALIGN_GROUP_FIELD_DECLARATIONS" value="true" />
+      <option name="ALIGN_CONSECUTIVE_VARIABLE_DECLARATIONS" value="true" />
+      <option name="ALIGN_SUBSEQUENT_SIMPLE_METHODS" value="true" />
+      <option name="SPACE_BEFORE_COMMA" value="true" />
+      <option name="SPACE_AFTER_SEMICOLON" value="false" />
+      <option name="SPACE_BEFORE_SEMICOLON" value="true" />
+    </codeStyleSettings>
     <codeStyleSettings language="XML">
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
