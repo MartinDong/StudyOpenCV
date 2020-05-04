@@ -6,10 +6,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Surface;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -38,23 +36,23 @@ public class FdActivity extends AppCompatActivity
     private static final String TAG = "人脸识别页面：";
 
     private CameraBridgeViewBase openCvCameraView;
-    private Handler              mHandler;
-    private CascadeClassifier    mFrontalFaceClassifier = null; //正脸 级联分类器
-    private Mat                  mRgba; //图像容器
+    //正脸 级联分类器
+    private CascadeClassifier    mFrontalFaceClassifier = null;
+    //图像容器
+    private Mat                  mRgba;
     private Mat                  mGray;
-    private TextView             hint;
     //解决横屏问题
     private Mat                  Matlin;
     private Mat                  gMatlin;
     private int                  absoluteFaceSize;
     //人脸矩形框
     private Rect                 faceRect               = null;
+    private Scalar               FACE_RECT_COLOR        = new Scalar(0 , 255 , 0 , 255);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fd);
-        mHandler = new Handler();
         // 检查权限
         checkPermission();
         // 初始化控件
@@ -111,14 +109,13 @@ public class FdActivity extends AppCompatActivity
      */
     protected void initComponent() {
         openCvCameraView = findViewById(R.id.javaCameraView);
-        hint = findViewById(R.id.hint);
     }
 
     /**
      * @Description 初始化摄像头
      */
     protected void initCamera() {
-        openCvCameraView.setCameraIndex(1); //摄像头索引        -1/0：后置双摄     1：前置
+        openCvCameraView.setCameraIndex(1); //摄像头索引  -1/0：后置双摄 1：前置
         openCvCameraView.enableFpsMeter(); //显示FPS
         openCvCameraView.setCvCameraViewListener(this);//监听
         openCvCameraView.setMaxFrameSize(950 , 500);//设置帧大小
@@ -139,15 +136,15 @@ public class FdActivity extends AppCompatActivity
     public void onCameraViewStopped() {
         mRgba.release();
         mGray.release();
-        gMatlin.release();
         Matlin.release();
+        gMatlin.release();
     }
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         int rotation = openCvCameraView.getDisplay().getRotation();
 
-        //使前置的图像也是正的
+        //使前置的图像也是正的,子线程（非UI线程）
         mRgba = inputFrame.rgba(); //RGBA
         mGray = inputFrame.gray(); //单通道灰度图
         //解决  前置摄像头旋转显示问题
@@ -160,12 +157,12 @@ public class FdActivity extends AppCompatActivity
             Core.rotate(mGray , gMatlin , Core.ROTATE_90_CLOCKWISE);
             Core.rotate(mRgba , Matlin , Core.ROTATE_90_CLOCKWISE);
             if (mFrontalFaceClassifier != null) {
-                mFrontalFaceClassifier.detectMultiScale(gMatlin , faces , 1.1 , 5 , 2 , new Size(absoluteFaceSize , absoluteFaceSize) , new Size());
+                mFrontalFaceClassifier.detectMultiScale(gMatlin , faces , 1.1 , 2 , 2 , new Size(absoluteFaceSize , absoluteFaceSize) , new Size());
             }
             faceArray = faces.toArray();
 
             for (int i = 0 ;i < faceArray.length ;i++) {
-                Imgproc.rectangle(Matlin , faceArray[i].tl() , faceArray[i].br() , new Scalar(255 , 255 , 255) , 2);
+                Imgproc.rectangle(Matlin , faceArray[i].tl() , faceArray[i].br() , FACE_RECT_COLOR , 2);
                 if (i == faceArray.length - 1) {
                     faceRect = new Rect(faceArray[i].x , faceArray[i].y , faceArray[i].width , faceArray[i].height);
                 }

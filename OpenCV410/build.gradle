@@ -106,6 +106,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        debug {
+//            buildConfigField("boolean", "DEBUG", "false")
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_6
